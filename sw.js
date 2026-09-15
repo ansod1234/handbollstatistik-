@@ -1,4 +1,4 @@
-const CACHE_NAME = 'handboll-stat-v2.5.1';
+const CACHE_NAME = 'handboll-stat-v3.0';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (event) => {
