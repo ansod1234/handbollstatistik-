@@ -1,4 +1,4 @@
-const CACHE_NAME = 'handboll-stat-v2.5';
+const CACHE_NAME = 'handboll-stat-v2.5.1';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (event) => {
@@ -19,17 +19,14 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((resp) => {
-          if (resp && resp.status === 200) {
-            const clone = resp.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return resp;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(event.request)
+      .then((resp) => {
+        if (resp && resp.status === 200) {
+          const clone = resp.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return resp;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
