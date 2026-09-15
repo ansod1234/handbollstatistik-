@@ -4,13 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Handbollsstatistik</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f5c56">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Handboll">
 <style>
 :root{
   --bg:#f6f5f2; --card:#ffffff; --text:#1c1c1a; --text2:#5f5e5a; --text3:#8a8880;
@@ -66,24 +59,19 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
 </head>
 <body>
 <div class="wrap">
-<h1>Handbollsstatistik – matchregistrering <span style="font-size:12px;font-weight:400;color:var(--text3)">v2.5</span></h1>
+<h1>Handbollsstatistik – matchregistrering <span style="font-size:12px;font-weight:400;color:var(--text3)">v3.0</span></h1>
 
-<div class="grid2" style="margin-bottom:14px">
-  <button class="tabbtn active" id="nav-match">Match</button>
+<div class="grid3" style="margin-bottom:14px">
+  <button class="tabbtn active" id="nav-info">Info</button>
+  <button class="tabbtn" id="nav-match">Match</button>
   <button class="tabbtn" id="nav-history">Historik</button>
 </div>
 
-<div id="match-view">
+<div id="info-view">
 
 <div class="card row2">
   <div><label>Motstånd</label><input type="text" id="opponent" placeholder="Lagnamn"></div>
   <div><label>Datum</label><input type="date" id="matchdate"></div>
-</div>
-
-<div class="card" style="text-align:center">
-  <p class="section" style="margin-top:0">Ställning</p>
-  <p style="font-size:34px;font-weight:700;margin:0;line-height:1.1" id="score-display">0 – 0</p>
-  <p class="muted" id="score-sub" style="margin:4px 0 0">Vårt lag – Motstånd</p>
 </div>
 
 <div class="card">
@@ -92,6 +80,31 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
   <datalist id="matchtyp-suggestions"></datalist>
 </div>
 <p class="muted" style="margin:-8px 0 14px">Skriv fritt – sparas med i historiken och blir ett filter där.</p>
+
+<div class="card">
+  <p class="section" style="margin-top:0">Målvakter</p>
+  <div class="grid3">
+    <input type="text" class="kname" data-k="1" placeholder="Namn MV1">
+    <input type="text" class="kname" data-k="2" placeholder="Namn MV2">
+    <input type="text" class="kname" data-k="3" placeholder="Namn MV3">
+  </div>
+</div>
+
+<div class="card">
+  <p class="section" style="margin-top:0">Spelartrupp (anfall)</p>
+  <div class="grid3" id="roster-inputs" style="gap:6px"></div>
+  <p class="muted" style="margin-top:10px">Valfritt att fylla i. Namn här ger dig möjlighet att koppla skott och tekniska fel till en spelare i Anfall-läget – men inget kräver det.</p>
+</div>
+
+</div>
+
+<div id="match-view" style="display:none">
+
+<div class="card" style="text-align:center">
+  <p class="section" style="margin-top:0">Ställning</p>
+  <p style="font-size:34px;font-weight:700;margin:0;line-height:1.1" id="score-display">0 – 0</p>
+  <p class="muted" id="score-sub" style="margin:4px 0 0">Vårt lag – Motstånd</p>
+</div>
 
 <div class="card grid3" id="halvlek-row">
   <button class="halvbtn active" data-h="1">Halvlek 1</button>
@@ -109,11 +122,6 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
 </div>
 
 <div id="keeper-row" class="card">
-  <div class="grid3" style="margin-bottom:8px">
-    <input type="text" class="kname" data-k="1" placeholder="Namn MV1">
-    <input type="text" class="kname" data-k="2" placeholder="Namn MV2">
-    <input type="text" class="kname" data-k="3" placeholder="Namn MV3">
-  </div>
   <div class="grid3">
     <button class="kbtn" data-k="1">MV 1</button>
     <button class="kbtn" data-k="2">MV 2</button>
@@ -155,6 +163,12 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
   <button data-v="Lobb" style="grid-column: span 3">Lobb</button>
 </div>
 
+<div id="attack-player-row" style="display:none">
+  <p class="section">Spelare (valfritt)</p>
+  <div class="grid3" id="grp-player" style="gap:6px;margin-bottom:8px"></div>
+  <p class="muted" style="margin:-4px 0 14px" id="no-roster-note">Inga spelare inskrivna än – lägg till dem på Info-fliken om du vill koppla skott till namn. Går bra att hoppa över helt.</p>
+</div>
+
 <p class="section">Resultat</p>
 <div class="grp grid3" id="grp-outcome">
   <button data-v="Mål">Mål</button>
@@ -162,7 +176,7 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
   <button data-v="Miss">Miss</button>
 </div>
 <p class="err" id="shot-error">Välj minst Mål, Räddning eller Miss för att registrera.</p>
-<p class="muted" style="margin:-4px 0 8px">Stressigt läge? Det räcker att trycka Mål/Räddning/Miss och registrera – sida, position och målplacering är valfritt och kan lämnas tomma.</p>
+<p class="muted" style="margin:-4px 0 8px">Stressigt läge? Det räcker att trycka Mål/Räddning/Miss och registrera – allt annat, inklusive spelare, är valfritt.</p>
 <button id="register">Registrera skott</button>
 
 <div class="card">
@@ -172,6 +186,11 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
     <div style="text-align:center;font-size:12px;color:var(--text3)">Motstånd</div>
   </div>
   <div id="extras"></div>
+  <div id="tech-player-row" style="display:none;margin-top:10px">
+    <p class="section" style="margin-top:0">Spelare, eget lag (valfritt)</p>
+    <div class="grid3" id="grp-tech-player" style="gap:6px"></div>
+    <p class="muted" style="margin-top:8px">Kopplas till nästa tryck på Felpass/Övrigt fel/Utvisning för eget lag. Motståndets fel loggas alltid utan namn.</p>
+  </div>
 </div>
 
 <div class="foot">
@@ -216,7 +235,7 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
 
 <p class="muted" id="log-count">0 händelser loggade</p>
 <p class="muted">Sparas automatiskt i telefonens minne – du kan byta app eller stänga skärmen utan att förlora data.</p>
-<p class="muted">Handbollsstatistik version 2.5</p>
+<p class="muted">Handbollsstatistik version 3.0</p>
 <div class="foot" style="margin-top:6px">
   <button id="newmatch">Avsluta match (spara i historik &amp; börja ny)</button>
 </div>
@@ -232,6 +251,10 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
   <div class="card">
     <p class="section" style="margin-top:0">Anfall, laget</p>
     <div id="season-attack"></div>
+  </div>
+  <div class="card">
+    <p class="section" style="margin-top:0">Säsongsstatistik per spelare (anfall)</p>
+    <div id="season-players"></div>
   </div>
   <div class="card">
     <p class="section" style="margin-top:0">Tekniska fel &amp; utvisningar, säsong</p>
@@ -262,7 +285,7 @@ button.selected{background:var(--accent-bg);border-color:var(--accent);color:var
 <script>
 const STORAGE_KEY = 'handboll_stat_v1';
 const HISTORY_KEY = 'handboll_stat_history_v1';
-const state = {mode:'keeper', keeper:1, opponent:'', matchdate:'', matchtyp:'', halvlek:1, keeperNames:{1:'',2:'',3:''}, sel:{side:null,zone:null,target:null,outcome:null}, log:[]};
+const state = {mode:'keeper', keeper:1, opponent:'', matchdate:'', matchtyp:'', halvlek:1, keeperNames:{1:'',2:'',3:''}, roster:new Array(15).fill(''), techPlayer:null, sel:{side:null,zone:null,target:null,outcome:null,player:null}, log:[]};
 const extraTypes = ['Felpass','Övrigt fel','Utvisning'];
 const zones = ['9m','7-8m','Genombrott zon 3','Genombrott utsida 2','Linje','Kant','Kontring','Straff','Tomt mål'];
 const sides = ['Vänster','Mitt','Höger'];
@@ -270,7 +293,7 @@ const sides = ['Vänster','Mitt','Höger'];
 function saveState(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      opponent: state.opponent, matchdate: state.matchdate, matchtyp: state.matchtyp, keeperNames: state.keeperNames, log: state.log
+      opponent: state.opponent, matchdate: state.matchdate, matchtyp: state.matchtyp, keeperNames: state.keeperNames, roster: state.roster, log: state.log
     }));
   }catch(e){}
 }
@@ -283,6 +306,7 @@ function loadState(){
       state.matchdate = parsed.matchdate || '';
       state.matchtyp = parsed.matchtyp || '';
       state.keeperNames = parsed.keeperNames || {1:'',2:'',3:''};
+      state.roster = parsed.roster || new Array(15).fill('');
       state.log = parsed.log || [];
     }
   }catch(e){}
@@ -452,6 +476,50 @@ function renderMatchDetail(m){
 
 function keeperLabel(k){ return state.keeperNames[k] ? state.keeperNames[k] : ('MV '+k); }
 
+function buildRosterInputs(){
+  const el = document.getElementById('roster-inputs');
+  el.innerHTML = '';
+  state.roster.forEach((name, i)=>{
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.placeholder = 'Spelare '+(i+1);
+    inp.value = name;
+    inp.style.fontSize = '12px';
+    inp.oninput = (e)=>{ state.roster[i] = e.target.value; saveState(); buildPlayerPickers(); };
+    el.appendChild(inp);
+  });
+}
+
+function rosterNames(){
+  return state.roster.filter(n=>n && n.trim());
+}
+
+function buildPlayerPickers(){
+  const names = rosterNames();
+  const shotEl = document.getElementById('grp-player');
+  shotEl.innerHTML = '';
+  names.forEach(name=>{
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.style.fontSize = '13px';
+    b.onclick = ()=>{ state.sel.player = (state.sel.player===name) ? null : name; buildPlayerPickers(); };
+    if(name === state.sel.player){ b.style.background='var(--bg-accent)'; b.style.borderColor='var(--border-accent)'; b.style.color='var(--text-accent)'; }
+    shotEl.appendChild(b);
+  });
+  document.getElementById('no-roster-note').style.display = names.length ? 'none' : 'block';
+
+  const techEl = document.getElementById('grp-tech-player');
+  techEl.innerHTML = '';
+  names.forEach(name=>{
+    const b = document.createElement('button');
+    b.textContent = name;
+    b.style.fontSize = '13px';
+    b.onclick = ()=>{ state.techPlayer = (state.techPlayer===name) ? null : name; buildPlayerPickers(); };
+    if(name === state.techPlayer){ b.style.background='var(--bg-accent)'; b.style.borderColor='var(--border-accent)'; b.style.color='var(--text-accent)'; }
+    techEl.appendChild(b);
+  });
+}
+
 function buildExtras(){
   const el = document.getElementById('extras');
   el.innerHTML = '';
@@ -467,7 +535,10 @@ function buildExtras(){
       b.textContent = t+' (0)';
       b.onclick = ()=>{
         if(state.halvlek==='total'){ showBlockedToast(); return; }
-        state.log.push({kind:'extra', team, type:t, halvlek:state.halvlek, ts:Date.now()}); saveState(); render();
+        const spelare = (team==='own' && state.mode==='attack') ? state.techPlayer : null;
+        state.log.push({kind:'extra', team, type:t, halvlek:state.halvlek, spelare, ts:Date.now()});
+        if(team==='own'){ state.techPlayer = null; }
+        saveState(); render();
       };
       row.appendChild(b);
     });
@@ -542,8 +613,8 @@ document.getElementById('register').onclick = ()=>{
   if(state.halvlek==='total'){ showBlockedToast(); return; }
   if(!s.outcome){ err.textContent='Välj minst Mål, Räddning eller Miss för att registrera.'; err.style.display='block'; return; }
   err.style.display='none';
-  state.log.push({kind:'shot', mode:state.mode, keeper:state.mode==='keeper'?state.keeper:null, halvlek:state.halvlek, side:s.side||null, zone:s.zone||null, target:s.target||null, outcome:s.outcome, ts:Date.now()});
-  state.sel = {side:null,zone:null,target:null,outcome:null};
+  state.log.push({kind:'shot', mode:state.mode, keeper:state.mode==='keeper'?state.keeper:null, halvlek:state.halvlek, side:s.side||null, zone:s.zone||null, target:s.target||null, spelare:(state.mode==='attack'?s.player:null)||null, outcome:s.outcome, ts:Date.now()});
+  state.sel = {side:null,zone:null,target:null,outcome:null,player:null};
   saveState();
   render();
 };
@@ -552,7 +623,7 @@ document.getElementById('undo').onclick = ()=>{ state.log.pop(); saveState(); re
 document.getElementById('newmatch').onclick = ()=>{
   const typLabel = state.matchtyp || 'okänd typ';
   const msg = state.log.length > 0
-    ? 'Spara denna match ('+typLabel+') till historiken och börja en ny? Målvaktsnamn och matchtyp behålls, motstånd/datum och registrerade händelser nollställs.'
+    ? 'Spara denna match ('+typLabel+') till historiken och börja en ny? Målvaktsnamn, spelartrupp och matchtyp behålls, motstånd/datum och registrerade händelser nollställs.'
     : 'Börja en ny match? Inget att spara ännu.';
   if(!confirm(msg)) return;
   archiveCurrentMatch();
@@ -563,19 +634,17 @@ document.getElementById('newmatch').onclick = ()=>{
   updateMatchtypSuggestions();
   render();
 };
-document.getElementById('nav-match').onclick = ()=>{
-  document.getElementById('nav-match').classList.add('active');
-  document.getElementById('nav-history').classList.remove('active');
-  document.getElementById('match-view').style.display = 'block';
-  document.getElementById('history-view').style.display = 'none';
-};
-document.getElementById('nav-history').onclick = ()=>{
-  document.getElementById('nav-history').classList.add('active');
-  document.getElementById('nav-match').classList.remove('active');
-  document.getElementById('match-view').style.display = 'none';
-  document.getElementById('history-view').style.display = 'block';
-  renderHistory();
-};
+function showNav(name){
+  const views = {info:'info-view', match:'match-view', history:'history-view'};
+  Object.keys(views).forEach(k=>{
+    document.getElementById('nav-'+k).classList.toggle('active', k===name);
+    document.getElementById(views[k]).style.display = (k===name) ? 'block' : 'none';
+  });
+  if(name==='history') renderHistory();
+}
+document.getElementById('nav-info').onclick = ()=>showNav('info');
+document.getElementById('nav-match').onclick = ()=>showNav('match');
+document.getElementById('nav-history').onclick = ()=>showNav('history');
 document.getElementById('export-history').onclick = ()=>{
   const data = loadHistoryArr();
   if(data.length === 0){ alert('Ingen historik att exportera än.'); return; }
@@ -588,14 +657,14 @@ document.getElementById('export-history').onclick = ()=>{
 document.getElementById('export-history-csv').onclick = ()=>{
   const matches = allMatchesForHistory();
   if(matches.length === 0){ alert('Ingen historik att exportera än.'); return; }
-  let csv = 'motstand,datum,matchtyp,halvlek,typ,lag_eller_malvakt,sida,position,malplacering,resultat,tid\n';
+  let csv = 'motstand,datum,matchtyp,halvlek,typ,lag_eller_malvakt,sida,position,malplacering,resultat,tid,spelare\n';
   matches.forEach(m=>{
     m.log.forEach(e=>{
       if(e.kind==='shot'){
         const who = e.mode==='keeper' ? ((m.keeperNames && m.keeperNames[e.keeper]) ? m.keeperNames[e.keeper] : ('MV '+e.keeper)) : 'anfall';
-        csv += `${m.opponent||''},${m.matchdate||''},${m.matchtyp||''},${e.halvlek||''},skott,${who},${e.side||''},${e.zone||''},${e.target||''},${e.outcome},${new Date(e.ts).toLocaleTimeString()}\n`;
+        csv += `${m.opponent||''},${m.matchdate||''},${m.matchtyp||''},${e.halvlek||''},skott,${who},${e.side||''},${e.zone||''},${e.target||''},${e.outcome},${new Date(e.ts).toLocaleTimeString()},${e.spelare||''}\n`;
       } else {
-        csv += `${m.opponent||''},${m.matchdate||''},${m.matchtyp||''},${e.halvlek||''},ovrigt,${e.team==='own'?'eget':'motstand'},,,${e.type},,${new Date(e.ts).toLocaleTimeString()}\n`;
+        csv += `${m.opponent||''},${m.matchdate||''},${m.matchtyp||''},${e.halvlek||''},ovrigt,${e.team==='own'?'eget':'motstand'},,,${e.type},,${new Date(e.ts).toLocaleTimeString()},${e.spelare||''}\n`;
       }
     });
   });
@@ -628,13 +697,13 @@ document.getElementById('import-history-file').onchange = (e)=>{
   e.target.value = '';
 };
 document.getElementById('export').onclick = ()=>{
-  let csv = 'motstand,datum,matchtyp,halvlek,typ,lag_eller_malvakt,sida,position,malplacering,resultat,tid\n';
+  let csv = 'motstand,datum,matchtyp,halvlek,typ,lag_eller_malvakt,sida,position,malplacering,resultat,tid,spelare\n';
   state.log.forEach(e=>{
     if(e.kind==='shot'){
       const who = e.mode==='keeper' ? keeperLabel(e.keeper) : 'anfall';
-      csv += `${state.opponent},${state.matchdate},${state.matchtyp},${e.halvlek||''},skott,${who},${e.side||''},${e.zone||''},${e.target||''},${e.outcome},${new Date(e.ts).toLocaleTimeString()}\n`;
+      csv += `${state.opponent},${state.matchdate},${state.matchtyp},${e.halvlek||''},skott,${who},${e.side||''},${e.zone||''},${e.target||''},${e.outcome},${new Date(e.ts).toLocaleTimeString()},${e.spelare||''}\n`;
     } else {
-      csv += `${state.opponent},${state.matchdate},${state.matchtyp},${e.halvlek||''},ovrigt,${e.team==='own'?'eget':'motstand'},,,${e.type},,${new Date(e.ts).toLocaleTimeString()}\n`;
+      csv += `${state.opponent},${state.matchdate},${state.matchtyp},${e.halvlek||''},ovrigt,${e.team==='own'?'eget':'motstand'},,,${e.type},,${new Date(e.ts).toLocaleTimeString()},${e.spelare||''}\n`;
     }
   });
   const blob = new Blob([csv], {type:'text/csv'});
@@ -665,6 +734,9 @@ function render(){
   document.getElementById('tab-keeper').classList.toggle('active', state.mode==='keeper');
   document.getElementById('tab-attack').classList.toggle('active', state.mode==='attack');
   document.getElementById('keeper-row').style.display = state.mode==='keeper' ? 'block' : 'none';
+  document.getElementById('attack-player-row').style.display = state.mode==='attack' ? 'block' : 'none';
+  document.getElementById('tech-player-row').style.display = state.mode==='attack' ? 'block' : 'none';
+  buildPlayerPickers();
   document.querySelectorAll('.halvbtn').forEach(b=>{
     const v = b.dataset.h==='total' ? 'total' : parseInt(b.dataset.h);
     b.classList.toggle('active', v===state.halvlek);
@@ -767,6 +839,7 @@ function renderHistory(){
 
   const seasonKeepers = {};
   const seasonAttack = {mal:0, radd:0, miss:0};
+  const seasonPlayers = {};
   const seasonExtras = {};
   extraTypes.forEach(t=>{ seasonExtras[t] = {own:0, opp:0}; });
   matches.forEach(m=>{
@@ -779,12 +852,44 @@ function renderHistory(){
           seasonKeepers[name].matches.add(m.id);
         } else {
           seasonAttack[e.outcome==='Mål'?'mal':e.outcome==='Räddning'?'radd':'miss']++;
+          if(e.spelare){
+            if(!seasonPlayers[e.spelare]) seasonPlayers[e.spelare] = {mal:0, radd:0, miss:0, tech:0, matches:new Set()};
+            seasonPlayers[e.spelare][e.outcome==='Mål'?'mal':e.outcome==='Räddning'?'radd':'miss']++;
+            seasonPlayers[e.spelare].matches.add(m.id);
+          }
         }
       } else if(e.kind==='extra'){
         if(seasonExtras[e.type]) seasonExtras[e.type][e.team]++;
+        if(e.team==='own' && e.spelare){
+          if(!seasonPlayers[e.spelare]) seasonPlayers[e.spelare] = {mal:0, radd:0, miss:0, tech:0, matches:new Set()};
+          seasonPlayers[e.spelare].tech++;
+          seasonPlayers[e.spelare].matches.add(m.id);
+        }
       }
     });
   });
+
+  const pEl = document.getElementById('season-players');
+  const playerNames = Object.keys(seasonPlayers);
+  if(playerNames.length === 0){
+    pEl.innerHTML = '<p class="muted" style="margin:0">Ingen spelare kopplad till skott eller tekniska fel ännu.</p>';
+  } else {
+    pEl.innerHTML = '';
+    playerNames.forEach(name=>{
+      const d = seasonPlayers[name];
+      const total = d.mal+d.radd+d.miss;
+      const pct = total ? Math.round(100*d.mal/total) : null;
+      const row = document.createElement('div');
+      row.className = 'prow';
+      row.innerHTML =
+        '<div class="plabel"><span style="font-weight:600">'+name+'</span><span>'+d.matches.size+' match(er)</span></div>'+
+        '<div class="psub" style="justify-content:space-between">'+
+          '<span>Mål/Miss: '+d.mal+' / '+d.miss+' · Tekn. '+d.tech+'</span>'+
+          '<span style="font-weight:700;color:var(--text)">Skott% '+(pct===null?'–':pct+'%')+'</span>'+
+        '</div>';
+      pEl.appendChild(row);
+    });
+  }
 
   const kEl = document.getElementById('season-keepers');
   const names = Object.keys(seasonKeepers);
@@ -886,18 +991,12 @@ document.getElementById('matchdate').value = state.matchdate;
 document.getElementById('matchtyp').value = state.matchtyp;
 document.querySelectorAll('.kname').forEach(inp=>{ inp.value = state.keeperNames[inp.dataset.k] || ''; });
 updateMatchtypSuggestions();
+buildRosterInputs();
 
 buildExtras();
 buildPosRows();
 buildHeatmap();
 render();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
-}
 </script>
 </body>
 </html>
